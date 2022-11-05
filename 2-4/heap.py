@@ -1,3 +1,5 @@
+import heapq
+
 class Heap:
     def __init__(self, data):
         self.data = []
@@ -35,8 +37,36 @@ class Heap:
         self.data = self.data[:self.size]
         return ret
 
+class Heap_q:
+    def __init__(self, data, max_flag=False):
+        self.flag = max_flag
+        if max_flag:
+            data = [-x for x in data]
+        
+        heapq.heapify(data)
+        self.data = data
+
+    def pop(self):
+        if self.flag:
+            return -heapq.heappop(self.data)
+        else:
+            return heapq.heappop(self.data)
+
+    def push(self, x):
+        if self.flag:
+            heapq.heappush(self.data, -x)
+        else:
+            heapq.heappush(self.data, x)
+
 if __name__ == '__main__':
     h = Heap([1, 2, 4, 7, 8, 5])
+    print(h.data)
+    h.push(3)
+    print(h.data)
+    print(h.pop())
+    print(h.data)
+
+    h = Heap_q([1, 2, 4, 7, 8, 5])
     print(h.data)
     h.push(3)
     print(h.data)
