@@ -1,5 +1,6 @@
 def solve(n, cost, s, g):
     d = [float('inf')] * n
+    prev = [None] * n
     d[s] = 0
     used = [False] * n
 
@@ -18,8 +19,13 @@ def solve(n, cost, s, g):
 
         for u in range(n):
             if cost[v][u] != -1:
-                d[u] = min(d[u], d[v] + cost[v][u])
+                if d[u] > d[v] + cost[v][u]:
+                    d[u] = d[v] + cost[v][u]
+                    prev[u] = v
 
+        print(prev)
+
+    print(prev)
     return d[g]
 
 import heapq
