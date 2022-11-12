@@ -3,7 +3,10 @@ def solve(N, K, L):
     lb = 1
     ub = INF
 
-    while ub - lb >= 1e-2:
+    # while ub - lb >= 1e-2:
+    for i in range(100):
+        if ub - lb < 1e-2:
+            break
         mid = (lb + ub) / 2
         if C(mid, L, K):
             lb = mid
