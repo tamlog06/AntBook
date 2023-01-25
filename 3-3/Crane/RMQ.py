@@ -1,55 +1,58 @@
-class RMQ:
-    def __init__(self, N, x):
-        # N: 配列の要素数
-        self.N = N
+N, q = map(int, input().split())
+com, x, y = [], [], []
+for _ in range(q):
+    c, a, b = map(int, input().split())
+    com.append(c)
+    x.append(a)
+    y.append(b)
 
-        n = 1
-        while n < N:
-            n *= 2
 
-        self.dat = [float("inf")] * (2 * n - 1)
+# N0 = 2**(N-1).bit_length()
+N0 = 1
+while N0 < N:
+    N0 *= 2
 
-        for i in range(N):
-            self.dat[i + N - 1] = x[i]
+INF = 2**31-1
+# 1-indexed
+data = [INF]*(2*N0)
 
-        for i in range(N - 2, -1, -1):
-            self.dat[i] = min(self.dat[i * 2 + 1], self.dat[i * 2 + 2])
+# for i in range(N):
+    # data[i+N0] = x[i]
 
-    # 0-indexed
-    def update(self, k, a):
-        # k: 更新する要素の添字
-        # a: 更新する値
+# for i in range(N0-1, -1, -1):
+    # data[i] = min(data[2*i], data[2*i+1])
 
-        k += self.N - 1
-        self.dat[k] = a
+# a_k の値を x に更新
+def update(k, x):
+    k += N0
+    data[k] = x
+    while k > 1:
+        k = k // 2
+        data[k] = min(data[2*k], data[2*k+1])
 
-        while k > 0:
-            k = (k - 1) // 2
-            self.dat[k] = min(self.dat[k * 2 + 1], self.dat[k * 2 + 2])
+# 区間[l, r)の最小値
+def query(l, r):
+    L = l + N0
+    R = r + N0
 
-    def query(self, a, b, k, l, r):
-        # [a, b)の最小値を求める
-        # k: 現在見ているノードの添字
-        # l, r: 現在見ているノードが[l, r)に対応していることを表す
+    s = INF
+    while L < R:
+        if R % 2 == 1:
+            s = min(s, data[R-1])
+            R -= 1
 
-        if r <= a or b <= l:
-            return float("inf")
+        if L % 2 == 1:
+            s = min(s, data[L])
+            L += 1
 
-        if a <= l and r <= b:
-            return self.dat[k]
+        L = L // 2
+        R = R // 2
+    return s
 
-        vl = self.query(a, b, k * 2 + 1, l, (l + r) // 2)
-        vr = self.query(a, b, k * 2 + 2, (l + r) // 2, r)
 
-        return min(vl, vr)
 
-if __name__ == '__main__':
-    x = [5, 3, 7, 9, 6, 4, 1, 2]
-
-    rmq = RMQ(len(x), x)
-
-    print(rmq.dat)
-    print(rmq.query(0, 7, 0, 0, rmq.N))
-
-    rmq.update(0, 2)
-    print(rmq.query(0, 4, 0, 0, rmq.N))
+for i in range(q):
+    if com[i] == 0:
+        update(x[i], y[i])
+    else:
+        print(query(x[i], y[i]+1))
