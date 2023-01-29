@@ -29,7 +29,19 @@ print(rec(0, 0))
 
 # Solution 2
 
+def solve():
+    dp = [[float('inf') for _ in range(N)] for _ in range(1 << N)]
+    dp[(1<<N)-1][0] = 0
 
+    for S in range((1<<N)-2, -1, -1):
+        for v in range(N):
+            for u in range(N):
+                if not S >> u & 1:
+                    dp[S][v] = min(dp[S][v], dp[S | 1 << u][u] + edges[v][u])
+
+    return dp[0][0]
+
+print(solve())
 
 """
 入力例1
